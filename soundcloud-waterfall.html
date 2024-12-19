@@ -1,160 +1,636 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SoundCloud Waterfall</title>
-    <style>
-        body, html {
-            margin: 0;
-            padding: 0;
-            height: 100%;
-            font-family: Arial, sans-serif;
-            overflow: hidden;
-            background: linear-gradient(180deg, #0c3f5c 0%, #115c82 100%);
-        }
-        .waterfall-container {
-            position: relative;
-            width: 100%;
-            height: 100vh;
-            overflow: hidden;
-        }
-        .beat-mini {
-            position: absolute;
-            width: 60px;
-            height: 60px;
-            border-radius: 10px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
-        }
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1001;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            overflow: auto;
-            background-color: rgba(0, 0, 0, 0.8);
-        }
-        .modal-content {
-            background-color: #fff;
-            margin: 15% auto;
-            padding: 20px;
-            border: 1px solid #4bc4e0;
-            width: 70%;
-            max-width: 600px;
-        }
-        .close {
-            color: #000;
-            float: right;
-            font-size: 28px;
-            font-weight: bold;
-            cursor: pointer;
-        }
-        .close:hover {
-            color: #ff0000;
-        }
-        .soundcloud-player {
-            width: 100%;
-            height: 166px;
-            margin: 20px 0;
-        }
-    </style>
+<html><head><base href="https://websim.ai/nftbeats.io/waterfall%20generate%20images%20for%20square%20place%20holders%20falling%20down%20for%20th%20beats.%20More%20imporantly%20show%20an%20image%20when%20a%20user%20clicks%20on%20a%20sqare.%20Add%20a%20color%20coded%20sort%20function%20or%20legend%20so%20that%20users%20know%20teh%20correlation%20between%20colors%20and%20price.%20.02%20sol%20is%20the%20cheapest%20price%20and%20go%20up%20from%20there.%20add%20more%20sections.%202-3%20sol,%203-5%20sol,%205+.%20Once%20i%20click%20on%20an%20image%20Generate%20an%20preview%20of%20the%20artwork.%20Mouse%20over%20a%20square%20shows%20all%20the%20details%20as%20if%20you%20click%20on%20it.%20Click%20on%20a%20square%20shows%20all%20details%20as%20well.">
+<title>NFTBeats.io - Beat Waterfall</title>
+<style>
+  body, html {
+    margin: 0;
+    padding: 0;
+    font-family: 'Arial', sans-serif;
+    height: 100%;
+    overflow: hidden;
+    background: linear-gradient(180deg, 
+      #0c3f5c 0%,
+      #115c82 20%,
+      #1a7ba6 40%,
+      #2596c7 60%,
+      #39add3 80%,
+      #4bc4e0 100%
+    );
+  }
+  .nav-bar {
+    background-color: rgba(26, 26, 46, 0.8);
+    overflow: hidden;
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 1000;
+  }
+  .nav-bar a {
+    float: left;
+    display: block;
+    color: #f2f2f2;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+    font-size: 17px;
+  }
+  .nav-bar a:hover {
+    background-color: rgba(22, 33, 62, 0.8);
+    color: #00ffcc;
+  }
+  .waterfall-container {
+    position: relative;
+    width: 100%;
+    height: 100vh;
+    overflow: hidden;
+  }
+  .waterfall-container::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(180deg,
+      rgba(255,255,255,0.1) 0%,
+      rgba(255,255,255,0.15) 50%,
+      rgba(255,255,255,0.2) 100%
+    );
+    animation: waterFlow 8s linear infinite;
+    pointer-events: none;
+    z-index: -1;
+  }
+  .waterfall-container::after {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: repeating-linear-gradient(
+      180deg,
+      transparent 0%,
+      rgba(255,255,255,0.05) 50%,
+      transparent 100%
+    );
+    background-size: 100% 50px;
+    animation: waterFlow 3s linear infinite;
+    pointer-events: none;
+    z-index: -1;
+  }
+  @keyframes waterFlow {
+    0% {
+      transform: translateY(0);
+    }
+    100% {
+      transform: translateY(100%);
+    }
+  }
+  .beat-mini {
+    position: absolute;
+    width: 60px;
+    height: 60px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+  }
+  .beat-mini:hover {
+    transform: scale(1.1);
+    box-shadow: 0 0 20px rgba(0, 255, 204, 0.8);
+  }
+  .pool {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: 20%;
+    background: linear-gradient(0deg, 
+      rgba(75,196,224,0.4) 0%, 
+      rgba(26,123,166,0) 100%
+    );
+    border-top-left-radius: 50% 20%;
+    border-top-right-radius: 50% 20%;
+  }
+  .pool:after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 30%;
+    background: rgba(75,196,224,0.3);
+    filter: blur(10px);
+  }
+  .modal {
+    display: none;
+    position: fixed;
+    z-index: 1001;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.8);
+  }
+  .modal-content {
+    background-color: rgba(12, 63, 92, 0.95);
+    margin: 15% auto;
+    padding: 20px;
+    border: 1px solid #4bc4e0;
+    width: 70%;
+    max-width: 600px;
+    border-radius: 15px;
+    box-shadow: 0 0 30px rgba(75, 196, 224, 0.5);
+  }
+  .close {
+    color: #00ffcc;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+  }
+  .close:hover {
+    color: #fff;
+  }
+  .beat-info h2 {
+    color: #00ffcc;
+    margin-top: 0;
+  }
+  .beat-info img {
+    width: 100%;
+    max-height: 300px;
+    object-fit: cover;
+    border-radius: 10px;
+    margin-bottom: 20px;
+  }
+  .beat-info p {
+    margin: 10px 0;
+    color: #fff;
+  }
+  .beat-actions {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+  }
+  .beat-actions button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 16px;
+  }
+  .listen-btn {
+    background-color: #16213e;
+    color: #00ffcc;
+  }
+  .listen-btn:hover {
+    background-color: #00ffcc;
+    color: #16213e;
+  }
+  .buy-trade-btn {
+    background-color: #00ffcc;
+    color: #16213e;
+  }
+  .buy-trade-btn:hover {
+    background-color: #16213e;
+    color: #00ffcc;
+  }
+  .dm-btn {
+    background-color: #4a4a8f;
+    color: #fff;
+  }
+  .dm-btn:hover {
+    background-color: #6a6abf;
+  }
+  .filter-bar {
+    background-color: rgba(26, 26, 46, 0.8);
+    padding: 10px;
+    display: flex;
+    gap: 15px;
+    align-items: center;
+    position: fixed;
+    top: 46px; /* Position below main nav */
+    width: 100%;
+    z-index: 999;
+  }
+  .filter-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .filter-group label {
+    color: #f2f2f2;
+    font-size: 14px;
+  }
+  .filter-group select {
+    background-color: rgba(12, 63, 92, 0.9);
+    color: #fff;
+    border: 1px solid #4bc4e0;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  .filter-group select:hover {
+    border-color: #00ffcc;
+  }
+  .beat-tooltip {
+    position: absolute;
+    background-color: rgba(12, 63, 92, 0.95);
+    color: #fff;
+    padding: 10px;
+    border: 1px solid #4bc4e0;
+    border-radius: 5px;
+    font-size: 14px;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: 1000;
+  }
+  .soundcloud-player {
+    width: 100%;
+    height: 166px;
+    margin: 20px 0;
+  }
+  .soundcloud-player iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+  }
+</style>
 </head>
 <body>
-    <div class="waterfall-container" id="waterfallContainer"></div>
+<div class="nav-bar">
+  <a href="https://websim.ai/nftbeats.io">Home</a>
+  <a href="https://websim.ai/nftbeats.io/marketplace">Marketplace</a>
+  <a href="https://websim.ai/nftbeats.io/producers">Producers</a>
+  <a href="https://websim.ai/nftbeats.io/beat-drops">Beat Drops</a>
+  <a href="https://websim.ai/nftbeats.io/waterfall">Waterfall</a>
+  <a href="https://websim.ai/nftbeats.io/profile" style="float:right;">My Profile</a>
+</div>
 
-    <div id="beatModal" class="modal">
-        <div class="modal-content">
-            <span class="close">&times;</span>
-            <div id="soundcloud-player" class="soundcloud-player"></div>
-        </div>
+<div class="filter-bar">
+  <div class="filter-group">
+    <label>Price:</label>
+    <select id="priceFilter">
+      <option value="all">All Prices</option>
+      <option value="0-0.5">0.02 - 0.5 SOL</option>
+      <option value="0.51-1">0.51 - 1.0 SOL</option>
+      <option value="1.01-2">1.01 - 2.0 SOL</option>
+      <option value="2.01-3">2.01 - 3.0 SOL</option>
+      <option value="3.01-5">3.01 - 5.0 SOL</option>
+      <option value="5+">5.01+ SOL</option>
+    </select>
+  </div>
+  
+  <div class="filter-group" style="display: none;">
+    <label>Genre:</label>
+    <select id="genreFilter">
+      <option value="all">All Genres</option>
+      <option value="Synthwave">Synthwave</option>
+      <option value="Trap">Trap</option>
+      <option value="Ambient">Ambient</option>
+      <option value="House">House</option>
+      <option value="Hip-Hop">Hip-Hop</option>
+      <option value="Funk">Funk</option>
+      <option value="Electronic">Electronic</option>
+      <option value="Drum & Bass">Drum & Bass</option>
+      <option value="Blues">Blues</option>
+      <option value="Classical">Classical</option>
+      <option value="Experimental">Experimental</option>
+      <option value="Folk">Folk</option>
+    </select>
+  </div>
+
+  <div class="filter-group">
+    <label>BPM:</label>
+    <select id="bpmFilter">
+      <option value="all">All BPM</option>
+      <option value="0-90">Below 90</option>
+      <option value="90-120">90-120</option>
+      <option value="120-140">120-140</option>
+      <option value="140+">140+</option>
+    </select>
+  </div>
+
+  <div class="filter-group">
+    <label>Date:</label>
+    <select id="dateFilter">
+      <option value="all">All Time</option>
+      <option value="today">Today</option>
+      <option value="week">This Week</option>
+      <option value="month">This Month</option>
+      <option value="year">This Year</option>
+    </select>
+  </div>
+</div>
+
+<div class="waterfall-container">
+  <div class="pool"></div>
+</div>
+
+<div id="beatModal" class="modal">
+  <div class="modal-content">
+    <span class="close">&times;</span>
+    <div class="beat-info">
+      <h2 id="beatTitle"></h2>
+      <div id="artworkPreview" class="artwork-preview"></div>
+      <p id="beatArtist"></p>
+      <p id="beatGenre"></p>
+      <p id="beatPrice"></p>
+      <div class="soundcloud-player" id="soundcloud-player"></div>
+      <div class="beat-actions">
+        <button class="listen-btn">Listen</button>
+        <button class="buy-trade-btn">Buy or Trade</button>
+        <button class="dm-btn">DM Owner</button>
+      </div>
     </div>
+  </div>
+</div>
 
-    <script>
-        // Hardcoded track data for demonstration
-        const tracks = [
-            {
-                id: '2621', // Track ID for "Cold Pizza in the Office"
-                title: 'Cold Pizza in the Office',
-                embedUrl: 'https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/2621&color=%23002da5&auto_play=false&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true'
-            },
-            // You can add more tracks here if needed
-        ];
+<div class="beat-tooltip"></div>
 
-        const waterfallContainer = document.getElementById('waterfallContainer');
-        const modal = document.getElementById('beatModal');
-        const closeBtn = document.querySelector('.close');
-        const soundcloudPlayer = document.getElementById('soundcloud-player');
+<script>
+const beats = [
+  { id: 1, title: "Trap Lord", artist: "TrapGod", genre: "Trap", price: 2.5, trackId: '359960351', artworkSeed: 'trap91' },
+  { id: 2, title: "808 Dreams", artist: "BassKing", genre: "Trap", price: 1.8, trackId: '308534526', artworkSeed: 'bass47' }, 
+  { id: 3, title: "Dark Vibes", artist: "TrapMaster", genre: "Trap", price: 0.5, trackId: '317320391', artworkSeed: 'dark23' },
+  { id: 4, title: "Trap House", artist: "808Mafia", genre: "Trap", price: 0.8, trackId: '341744332', artworkSeed: 'house85' },
+  { id: 5, title: "Bass Drop", artist: "TrapLord", genre: "Trap", price: 0.2, trackId: '341744634', artworkSeed: 'drop36' },
+  { id: 6, title: "Hard Trap", artist: "TrapKing", genre: "Trap", price: 1.2, trackId: '341744784', artworkSeed: 'hard74' },
+  { id: 7, title: "Trap Life", artist: "TrapGang", genre: "Trap", price: 0.7, trackId: '341744893', artworkSeed: 'life19' },
+  { id: 8, title: "808 Madness", artist: "BassGod", genre: "Trap", price: 1.5, trackId: '341745084', artworkSeed: 'mad62' },
+  { id: 9, title: "Trap Nation", artist: "TrapCity", genre: "Trap", price: 3.8, trackId: '341745236', artworkSeed: 'nation95' },
+  { id: 10, title: "Bass Nation", artist: "808Nation", genre: "Trap", price: 0.9, trackId: '341745397', artworkSeed: 'bass31' },
+  { id: 11, title: "Trap House 2", artist: "TrapFamily", genre: "Trap", price: 4.5, trackId: '341745551', artworkSeed: 'house78' },
+  { id: 12, title: "Dark Trap", artist: "TrapDark", genre: "Trap", price: 2.2, trackId: '341745706', artworkSeed: 'dark42' },
+  { id: 13, title: "808 Heaven", artist: "HeavenlyTraps", genre: "Trap", price: 5.5, trackId: '341745856', artworkSeed: 'heaven89' },
+  { id: 14, title: "Trap Paradise", artist: "ParadiseTraps", genre: "Trap", price: 3.3, trackId: '341746083', artworkSeed: 'paradise53' },
+  { id: 15, title: "Bass Kingdom", artist: "KingOfTraps", genre: "Trap", price: 1.7, trackId: '341746235', artworkSeed: 'kingdom67' }
+].map(beat => ({
+  ...beat,
+  bpm: Math.floor(Math.random() * (160 - 70) + 70), // Random BPM between 70-160
+  uploadDate: new Date(Date.now() - Math.random() * 31536000000) // Random date within last year
+}));
 
-        console.log('Elements initialized:', {waterfallContainer, modal, closeBtn, soundcloudPlayer});
+const container = document.querySelector('.waterfall-container');
+const modal = document.getElementById('beatModal');
+const closeBtn = document.querySelector('.close');
+const tooltip = document.querySelector('.beat-tooltip');
 
-        const generateArtworkPreview = (title) => {
-            return `https://picsum.photos/seed/${title}/400/400`;
-        };
+function getColorByPrice(price) {
+  if (price <= 0.5) return '#00ff00';
+  if (price <= 1.0) return '#ffff00';
+  if (price <= 2.0) return '#ffa500';
+  if (price <= 3.0) return '#ff0000';
+  if (price <= 5.0) return '#ff00ff';
+  return '#8a2be2';
+}
 
-        const createBeatMini = (track) => {
-            console.log('Creating beat mini for track:', track);
-            const mini = document.createElement('div');
-            mini.className = 'beat-mini';
-            mini.style.backgroundImage = `url(${generateArtworkPreview(track.title)})`;
-            mini.dataset.embedUrl = track.embedUrl;
-            mini.style.left = `${Math.random() * (window.innerWidth - 60)}px`;
-            mini.style.top = `-${Math.random() * 100 + 60}px`;
-            waterfallContainer.appendChild(mini);
-            animateBeat(mini, track);
-        };
+function generateArtworkPreview(beat) {
+  return `https://picsum.photos/seed/${beat.artworkSeed}/400/400`;
+}
 
-        const animateBeat = (mini, track) => {
-            console.log('Animating beat mini:', mini);
-            const duration = 15000 + Math.random() * 10000;
-            mini.animate([
-                { transform: 'translateY(0)' },
-                { transform: `translateY(${window.innerHeight}px)` }
-            ], {
-                duration: duration,
-                easing: 'linear'
-            }).onfinish = () => {
-                mini.remove();
-                createBeatMini(track);
-            };
+function createBeatMini(beat) {
+  const mini = document.createElement('div');
+  mini.className = 'beat-mini';
+  mini.style.backgroundColor = getColorByPrice(beat.price);
+  mini.style.backgroundImage = `url(https://picsum.photos/seed/${beat.artworkSeed}/60/60)`;
+  mini.style.backgroundSize = 'cover';
+  mini.style.backgroundPosition = 'center';
+  mini.dataset.id = beat.id;
+  return mini;
+}
 
-            mini.onclick = () => {
-                showBeatDetails(track);
-            };
-        };
+function animateBeat(mini) {
+  const startX = Math.random() * (container.clientWidth - 60);
+  const duration = 15000 + Math.random() * 10000;
+  
+  mini.style.left = `${startX}px`;
+  mini.style.top = '-60px';
+  
+  const keyframes = [
+    { top: '-60px', offset: 0 },
+    { top: `${container.clientHeight * 0.8}px`, offset: 0.7 },
+    { top: `${container.clientHeight * 0.8}px`, left: `${startX + Math.random() * 40 - 20}px`, offset: 0.9 },
+    { top: `${container.clientHeight}px`, left: `${startX + Math.random() * 80 - 40}px`, offset: 1 }
+  ];
+  
+  const animation = mini.animate(keyframes, {
+    duration: duration,
+    easing: 'cubic-bezier(0.25, 0.1, 0.25, 1)'
+  });
+  
+  animation.onfinish = () => {
+    mini.remove();
+    createAndAnimateBeat(beats[Math.floor(Math.random() * beats.length)]);
+  };
 
-        const showBeatDetails = (track) => {
-            console.log('Showing beat details for track:', track);
-            soundcloudPlayer.innerHTML = `<iframe width="100%" height="166" scrolling="no" frameborder="no" allow="autoplay" src="${track.embedUrl}"></iframe>`;
-            modal.style.display = 'block';
-        };
+  mini.animation = animation;
+}
 
-        closeBtn.onclick = () => {
-            modal.style.display = 'none';
-        };
+function createAndAnimateBeat(beat) {
+  const mini = createBeatMini(beat);
+  container.appendChild(mini);
+  animateBeat(mini);
+}
 
-        window.onclick = (event) => {
-            if (event.target == modal) {
-                modal.style.display = 'none';
-            }
-        };
+function showBeatDetails(beat) {
+  document.getElementById('beatTitle').textContent = beat.title;
+  document.getElementById('artworkPreview').style.backgroundImage = `url(${generateArtworkPreview(beat)})`;
+  document.getElementById('beatArtist').textContent = `Artist: ${beat.artist}`;
+  document.getElementById('beatGenre').textContent = `Genre: ${beat.genre}`;
+  document.getElementById('beatPrice').textContent = `Price: ${beat.price} SOL`;
+  
+  const soundcloudPlayer = document.getElementById('soundcloud-player');
+  soundcloudPlayer.innerHTML = `
+    <iframe 
+      src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/${beat.trackId}&color=%23ff5500&auto_play=false&hide_related=false&show_comments=false&show_user=true&show_reposts=false&show_teaser=true"
+      allow="autoplay"
+    ></iframe>
+  `;
+  
+  modal.style.display = 'block';
+}
 
-        const initializeWaterfall = () => {
-            console.log('Initializing waterfall');
-            tracks.forEach(track => createBeatMini(track));
-            console.log('Waterfall initialized');
-        };
+function showTooltip(beat, x,  y) {
+  tooltip.innerHTML = `
+    <strong>${beat.title}</strong><br>
+    Artist: ${beat.artist}<br>
+    Genre: ${beat.genre}<br>
+    Price: ${beat.price} SOL
+  `;
+  tooltip.style.left = `${x + 10}px`;
+  tooltip.style.top = `${y + 10}px`;
+  tooltip.style.opacity = '1';
+}
 
-        window.onload = () => {
-            console.log('Page loaded');
-            initializeWaterfall();
-        };
-    </script>
-</body>
-</html>
+function hideTooltip() {
+  tooltip.style.opacity = '0';
+}
+
+function filterBeats() {
+  const priceFilter = document.getElementById('priceFilter').value;
+  const bpmFilter = document.getElementById('bpmFilter').value;
+  const dateFilter = document.getElementById('dateFilter').value;
+
+  // Remove all current beats
+  document.querySelectorAll('.beat-mini').forEach(mini => mini.remove());
+
+  // Filter beats based on selected criteria
+  const filteredBeats = beats.filter(beat => {
+    const priceMatch = priceFilter === 'all' ? true :
+      priceFilter === '5+' ? beat.price >= 5 :
+      priceFilter.split('-').map(Number).every((val, i) => 
+        i === 0 ? beat.price >= val : beat.price <= val
+      );
+
+    const bpmMatch = bpmFilter === 'all' ? true :
+      bpmFilter === '140+' ? beat.bpm >= 140 :
+      bpmFilter.split('-').map(Number).every((val, i) => 
+        i === 0 ? beat.bpm >= val : beat.bpm <= val
+      );
+
+    const now = new Date();
+    const dateMatch = dateFilter === 'all' ? true :
+      dateFilter === 'today' ? beat.uploadDate.toDateString() === now.toDateString() :
+      dateFilter === 'week' ? (now - beat.uploadDate) <= 604800000 :
+      dateFilter === 'month' ? (now - beat.uploadDate) <= 2592000000 :
+      dateFilter === 'year' ? (now - beat.uploadDate) <= 31536000000 : true;
+
+    return priceMatch && bpmMatch && dateMatch;
+  });
+
+  // Create new beats with filtered results
+  for (let i = 0; i < Math.min(30, filteredBeats.length); i++) {
+    setTimeout(() => {
+      createAndAnimateBeat(filteredBeats[Math.floor(Math.random() * filteredBeats.length)]);
+    }, i * 500);
+  }
+}
+
+// Add event listeners for filters
+['priceFilter', 'bpmFilter', 'dateFilter'].forEach(filterId => {
+  document.getElementById(filterId).addEventListener('change', filterBeats);
+});
+
+container.addEventListener('mouseover', (e) => {
+  const target = e.target;
+  if (target.classList.contains('beat-mini')) {
+    target.animation.pause();
+    const beatId = target.dataset.id;
+    const beat = beats.find(b => b.id == beatId);
+    showTooltip(beat, e.clientX, e.clientY);
+  }
+});
+
+container.addEventListener('mouseout', (e) => {
+  const target = e.target;
+  if (target.classList.contains('beat-mini')) {
+    target.animation.play();
+    hideTooltip();
+  }
+});
+
+container.addEventListener('mousemove', (e) => {
+  const target = e.target;
+  if (target.classList.contains('beat-mini')) {
+    const beatId = target.dataset.id;
+    const beat = beats.find(b => b.id == beatId);
+    showTooltip(beat, e.clientX, e.clientY);
+  }
+});
+
+container.addEventListener('click', (e) => {
+  if (e.target.classList.contains('beat-mini')) {
+    const beatId = e.target.dataset.id;
+    const beat = beats.find(b => b.id == beatId);
+    showBeatDetails(beat);
+  }
+});
+
+closeBtn.onclick = () => {
+  modal.style.display = 'none';
+}
+
+window.onclick = (e) => {
+  if (e.target == modal) {
+    modal.style.display = 'none';
+  }
+}
+
+document.querySelector('.dm-btn').addEventListener('click', () => {
+  alert('Sending DM to beat owner...');
+});
+
+document.querySelector('.listen-btn').addEventListener('click', () => {
+  const iframe = document.querySelector('.soundcloud-player iframe');
+  if (iframe) {
+    const widget = SC.Widget(iframe);
+    widget.toggle();
+  }
+});
+
+// Add SoundCloud Widget API script to the head section
+const scScript = document.createElement('script');
+scScript.src = 'https://w.soundcloud.com/player/api.js';
+document.head.appendChild(scScript);
+
+document.querySelector('.buy-trade-btn').addEventListener('click', () => {
+  alert('Redirecting to purchase/trade page...');
+  // Here you would typically redirect to a purchase or trade interface
+});
+
+// Create more beat minis to populate the waterfall
+for (let i = 0; i < 30; i++) {
+  setTimeout(() => {
+    createAndAnimateBeat(beats[Math.floor(Math.random() * beats.length)]);
+  }, i * 500);
+}
+
+// Function to periodically add new beats to keep the waterfall flowing
+function addNewBeats() {
+  setInterval(() => {
+    const currentBeats = document.querySelectorAll('.beat-mini');
+    if (currentBeats.length < 50) {
+      const priceFilter = document.getElementById('priceFilter').value; 
+      const bpmFilter = document.getElementById('bpmFilter').value;
+      const dateFilter = document.getElementById('dateFilter').value;
+
+      // Get filtered beats
+      const filteredBeats = beats.filter(beat => {
+        const priceMatch = priceFilter === 'all' ? true :
+          priceFilter === '5+' ? beat.price >= 5 :
+          priceFilter.split('-').map(Number).every((val, i) => 
+            i === 0 ? beat.price >= val : beat.price <= val
+          );
+
+        const bpmMatch = bpmFilter === 'all' ? true :
+          bpmFilter === '140+' ? beat.bpm >= 140 :
+          bpmFilter.split('-').map(Number).every((val, i) => 
+            i === 0 ? beat.bpm >= val : beat.bpm <= val
+          );
+
+        const now = new Date();
+        const dateMatch = dateFilter === 'all' ? true :
+          dateFilter === 'today' ? beat.uploadDate.toDateString() === now.toDateString() :
+          dateFilter === 'week' ? (now - beat.uploadDate) <= 604800000 :
+          dateFilter === 'month' ? (now - beat.uploadDate) <= 2592000000 :
+          dateFilter === 'year' ? (now - beat.uploadDate) <= 31536000000 : true;
+
+        return priceMatch && bpmMatch && dateMatch;
+      });
+
+      if (filteredBeats.length > 0) {
+        createAndAnimateBeat(filteredBeats[Math.floor(Math.random() * filteredBeats.length)]);
+      }
+    }
+  }, 1000);
+}
+
+addNewBeats();
+
+</script>
+
+</body></html>
