@@ -92,11 +92,14 @@
         const closeBtn = document.querySelector('.close');
         const soundcloudPlayer = document.getElementById('soundcloud-player');
 
+        console.log('Elements initialized:', {waterfallContainer, modal, closeBtn, soundcloudPlayer});
+
         const generateArtworkPreview = (title) => {
             return `https://picsum.photos/seed/${title}/400/400`;
         };
 
         const createBeatMini = (track) => {
+            console.log('Creating beat mini for track:', track);
             const mini = document.createElement('div');
             mini.className = 'beat-mini';
             mini.style.backgroundImage = `url(${generateArtworkPreview(track.title)})`;
@@ -108,6 +111,7 @@
         };
 
         const animateBeat = (mini, track) => {
+            console.log('Animating beat mini:', mini);
             const duration = 15000 + Math.random() * 10000;
             mini.animate([
                 { transform: 'translateY(0)' },
@@ -126,6 +130,7 @@
         };
 
         const showBeatDetails = (track) => {
+            console.log('Showing beat details for track:', track);
             soundcloudPlayer.innerHTML = `<iframe width="100%" height="166" scrolling="no" frameborder="no" allow="autoplay" src="${track.embedUrl}"></iframe>`;
             modal.style.display = 'block';
         };
@@ -141,10 +146,15 @@
         };
 
         const initializeWaterfall = () => {
+            console.log('Initializing waterfall');
             tracks.forEach(track => createBeatMini(track));
+            console.log('Waterfall initialized');
         };
 
-        initializeWaterfall();
+        window.onload = () => {
+            console.log('Page loaded');
+            initializeWaterfall();
+        };
     </script>
 </body>
 </html>
