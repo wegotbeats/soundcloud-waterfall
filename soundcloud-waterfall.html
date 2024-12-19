@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SoundCloud Waterfall</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            font-family: Arial, sans-serif;
+            overflow: hidden;
+            background: linear-gradient(180deg, #0c3f5c 0%, #115c82 100%);
+        }
+        .waterfall-container {
+            position: relative;
+            width: 100%;
+            height: 100vh;
+            overflow: hidden;
+        }
+        .beat-mini {
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1001;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.8);
+        }
+        .modal-content {
+            background-color: #fff;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #4bc4e0;
+            width: 70%;
+            max-width: 600px;
+        }
+        .close {
+            color: #000;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .close:hover {
+            color: #ff0000;
+        }
+        .soundcloud-player {
+            width: 100%;
+            height: 166px;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="waterfall-container" id="waterfallContainer"></div>
+
+    <div id="beatModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <div id="soundcloud-player" class="soundcloud-player"></div>
+        </div>
+    </div>
+
+    <script>
+        // Hardcoded track data for demonstration
+        const tracks = [
+            {
+                id: '2621', // Track ID for "Cold Pizza in the Office"
+                title: 'Cold Pizza in the Office',
+                embedUrl: 'https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/2621&color=%23002da5&auto_play=false&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true'
+            },
+            // You can add more tracks here if needed
+        ];
+
+        const waterfallContainer = document.getElementById('waterfallContainer');
+        const modal = document.getElementById('beatModal');
+        const closeBtn = document.querySelector('.close');
+        const soundcloudPlayer = document.getElementById('soundcloud-player');
+
+        const generateArtworkPreview = (title) => {
+            return `https://picsum.photos/seed/${title}/400/400`;
+        };
+
+        const createBeatMini = (track) => {
+            const mini = document.createElement('div');
+            mini.className = 'beat-mini';
+            mini.style.backgroundImage = `url(${generateArtworkPreview(track.title)})`;
+            mini.dataset.embedUrl = track.embedUrl;
+            mini.style.left = `${Math.random() * (window.innerWidth - 60)}px`;
+            mini.style.top = `-${Math.random() * 100 + 60}px`;
+            waterfallContainer.appendChild(mini);
+            animateBeat(mini, track);
+        };
+
+        const animateBeat = (mini, track) => {
+            const duration = 15000 + Math.random() * 10000;
+            mini.animate([
+                { transform: 'translateY(0)' },
+                { transform: `translateY(${window.innerHeight}px)` }
+            ], {
+                duration: duration,
+                easing: 'linear'
+            }).onfinish = () => {
+                mini.remove();
+                createBeatMini(track);
+            };
+
+            mini.onclick = () => {
+                showBeatDetails(track);
+            };
+        };
+
+        const showBeatDetails = (track) => {
+            soundcloudPlayer.innerHTML = `<iframe width="100%" height="166" scrolling="no" frameborder="no" allow="autoplay" src="${track.embedUrl}"></iframe>`;
+            modal.style.display = 'block';
+        };
+
+        closeBtn.onclick = () => {
+            modal.style.display = 'none';
+        };
+
+        window.onclick = (event) => {
+            if (event.target == modal) {
+                modal.style.display = 'none';
+            }
+        };
+
+        const initializeWaterfall = () => {
+            tracks.forEach(track => createBeatMini(track));
+        };
+
+        initializeWaterfall();
+    </script>
+</body>
+</html>
